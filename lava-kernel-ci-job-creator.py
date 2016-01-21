@@ -847,7 +847,7 @@ def create_jobs(base_url, kernel, plans, platform_list, targets, priority):
             test_type = None
             defconfigs = []
             for plan in plans:
-                if plan != 'boot':
+                if plan not in ['boot', 'power']:
                         config = ConfigParser.ConfigParser()
                         try:
                             config.read(cwd + '/templates/' + plan + '/' + plan + '.ini')
@@ -876,7 +876,7 @@ def create_jobs(base_url, kernel, plans, platform_list, targets, priority):
                     print '%s has been blacklisted. Skipping JSON creation' % kernel_version
                 elif targets is not None and device_type not in targets:
                     print '%s device type has been omitted. Skipping JSON creation.' % device_type
-                elif not any([x for x in defconfigs if x == defconfig]) and plan != 'boot':
+                elif not any([x for x in defconfigs if x == defconfig]) and plan not in ['boot', 'power']:
                     print '%s has been omitted from the %s test plan. Skipping JSON creation.' % (defconfig, plan)
                 else:
                     for template in device_templates:

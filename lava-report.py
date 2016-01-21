@@ -140,6 +140,17 @@ def boot_report(config):
         api_url = None
         arch = None
         board_instance = None
+        
+        # Start Power measurements #
+        voltage_max = None
+        power_max = None
+        power_avg = None
+        power_min = None
+        energy = None
+        current_max = None
+        current_min = None
+        # End Power
+
         boot_retries = 0
         kernel_defconfig_full = None
         kernel_defconfig = None
@@ -187,6 +198,30 @@ def boot_report(config):
         # Parse LAVA messages out of log
         raw_job_file = str(binary_job_file)
         for line in raw_job_file.splitlines():
+
+            regex = re.search(r'\bvmax=([\d.]+)', line)
+            if regex:
+		voltage_max = regex.group(1)
+            regex = re.search(r'\bcmax=([\d.]+)', line)
+            if regex:
+		current_max = regex.group(1)
+            regex = re.search(r'\bcmin=([\d.]+)', line)
+            if regex:
+		current_min = regex.group(1)
+            regex = re.search(r'\bpmax=([\d.]+)', line)
+            if regex:
+		power_max = regex.group(1)
+            regex = re.search(r'\bpmin=([\d.]+)', line)
+            if regex:
+		power_min = regex.group(1)
+            regex = re.search(r'\bpavg=([\d.]+)', line)
+            if regex:
+		power_avg = regex.group(1)
+            regex = re.search(r'\benergy=([\d.]+)', line)
+            if regex:
+		energy = regex.group(1)
+                boot_meta['has_power'] = '1'
+
             if 'Infrastructure Error:' in line:
                 print 'Infrastructure Error detected!'
                 index = line.find('Infrastructure Error:')
@@ -356,6 +391,22 @@ def boot_report(config):
                 boot_meta['lab_name'] = None
             if board_instance:
                 boot_meta['board_instance'] = board_instance
+
+            # POWER: at least the field 'energy' must
+            # be filled, otherwise, the frontend discards power stats
+            #
+            if energy:
+                boot_meta['energy'] = energy
+            if voltage_max:
+                boot_meta['voltage_max'] = voltage_max
+            if power_max:
+                boot_meta['power_max'] = power_max
+                boot_meta['power_avg'] = power_avg
+                boot_meta['power_min'] = power_min
+            if current_max:
+                boot_meta['current_max'] = current_max
+                boot_meta['current_min'] = current_min
+
             boot_meta['retries'] = boot_retries
             boot_meta['boot_log'] = log
             boot_meta['boot_log_html'] = html
