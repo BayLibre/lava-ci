@@ -220,7 +220,6 @@ def boot_report(config):
             regex = re.search(r'\benergy=([\d.]+)', line)
             if regex:
 		energy = regex.group(1)
-                boot_meta['has_power'] = '1'
 
             if 'Infrastructure Error:' in line:
                 print 'Infrastructure Error detected!'
@@ -421,6 +420,12 @@ def boot_report(config):
             boot_meta['kernel'] = kernel_version
             boot_meta['job'] = kernel_tree
             boot_meta['board'] = platform_name
+
+            # Add test plan to meta-data, to let the web feature
+            # dedicated contents for power metrics for instance
+            #
+            boot_meta['test_plan'] = test_plan
+
             if board_offline and result == 'FAIL':
                 boot_meta['boot_result'] = 'OFFLINE'
                 #results[kernel_defconfig]['result'] = 'OFFLINE'
