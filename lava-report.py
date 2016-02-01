@@ -142,14 +142,11 @@ def boot_report(config):
         arch = None
         board_instance = None
         
-        # Start Power measurements #
-        voltage_max = None
-        power_max = None
-        power_avg = None
-        power_min = None
-        energy = None
-        current_max = None
-        current_min = None
+	# this is the folder name (uuid) in /var/.../kernel-ci
+        # where lava uploads attachments.
+        #
+        power_stats = []
+
         # End Power
 
         boot_retries = 0
@@ -199,28 +196,6 @@ def boot_report(config):
         # Parse LAVA messages out of log
         raw_job_file = str(binary_job_file)
         for line in raw_job_file.splitlines():
-
-            regex = re.search(r'\bvmax=([\d.]+)', line)
-            if regex:
-		voltage_max = regex.group(1)
-            regex = re.search(r'\bcmax=([\d.]+)', line)
-            if regex:
-		current_max = regex.group(1)
-            regex = re.search(r'\bcmin=([\d.]+)', line)
-            if regex:
-		current_min = regex.group(1)
-            regex = re.search(r'\bpmax=([\d.]+)', line)
-            if regex:
-		power_max = regex.group(1)
-            regex = re.search(r'\bpmin=([\d.]+)', line)
-            if regex:
-		power_min = regex.group(1)
-            regex = re.search(r'\bpavg=([\d.]+)', line)
-            if regex:
-		power_avg = regex.group(1)
-            regex = re.search(r'\benergy=([\d.]+)', line)
-            if regex:
-		energy = regex.group(1)
 
             if 'Infrastructure Error:' in line:
                 print 'Infrastructure Error detected!'
@@ -275,6 +250,32 @@ def boot_report(config):
                         if test['test_case_id'] == 'test_kernel_boot_time':
                             kernel_boot_time = test['measurement']
                     bundle_attributes = bundle_data['test_runs'][-1]['attributes']
+                # check for a PowerCI attachement UUID
+		if test_results['test_id'] == 'lava-command':
+                ## using this uuid on lava side to upload to the attachments folder
+                #  we create a short uuid based on the first segment.
+                # see lava-dispatcher/lava_dispatcher/actions/lava_command.py
+                #
+                    for test in test_results['test_results']:
+                        if test['test_case_id'].startswith("hook#"):
+			   ## TODO handle many attachments and power stats, but this requires a
+                           # POWERCI API change
+                           output = test['measurement']
+                           try:
+                             power_test = {}
+                             power_test['data'] = test['test_case_id'].split('#')[1]
+                             power_test['voltage_max'] = re.search(r'\bvmax=([\d.]+)', output).group(1)
+                             power_test['current_max'] = re.search(r'\bcmax=([\d.]+)', output).group(1)
+                             power_test['current_min'] = re.search(r'\bcmin=([\d.]+)', output).group(1)
+                             power_test['power_max'] = re.search(r'\bpmax=([\d.]+)', output).group(1)
+                             power_test['power_min'] = re.search(r'\bpmin=([\d.]+)', output).group(1)
+                             power_test['power_avg'] = re.search(r'\bpavg=([\d.]+)', output).group(1)
+                             power_test['energy'] = re.search(r'\benergy=([\d.]+)', output).group(1)
+                             power_test['title'] = "data.csv"
+                             power_stats.append(power_test)
+                           except:
+                             pass
+                    boot_meta['power_stats'] = power_stats
             if utils.in_bundle_attributes(bundle_attributes, 'kernel.defconfig'):
                 print bundle_attributes['kernel.defconfig']
             if utils.in_bundle_attributes(bundle_attributes, 'target'):
@@ -391,21 +392,6 @@ def boot_report(config):
                 boot_meta['lab_name'] = None
             if board_instance:
                 boot_meta['board_instance'] = board_instance
-
-            # POWER: at least the field 'energy' must
-            # be filled, otherwise, the frontend discards power stats
-            #
-            if energy:
-                boot_meta['energy'] = energy
-            if voltage_max:
-                boot_meta['voltage_max'] = voltage_max
-            if power_max:
-                boot_meta['power_max'] = power_max
-                boot_meta['power_avg'] = power_avg
-                boot_meta['power_min'] = power_min
-            if current_max:
-                boot_meta['current_max'] = current_max
-                boot_meta['current_min'] = current_min
 
             boot_meta['retries'] = boot_retries
             boot_meta['boot_log'] = log
