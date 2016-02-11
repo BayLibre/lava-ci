@@ -271,7 +271,7 @@ def boot_report(config):
                              power_test['power_min'] = re.search(r'\bpmin=([\d.]+)', output).group(1)
                              power_test['power_avg'] = re.search(r'\bpavg=([\d.]+)', output).group(1)
                              power_test['energy'] = re.search(r'\benergy=([\d.]+)', output).group(1)
-                             power_test['title'] = "data.csv"
+                             power_test['filename'] = "data.csv"
                              power_stats.append(power_test)
                            except:
                              pass
