@@ -27,8 +27,14 @@
                 "commands": [
                     "uname -a",
                     "ps",
-		    "ls -al",
-                    "echo 'TODO: doing stuff on target to compare power stats'"   
+		    "ls -al"
+                ],
+                "parser": "^(?P<test_case_id>[^:]+):\\s*(?P<message>w+)\\s+(?P<units>\\w+)\\s+(?P<result>\\w+)",
+                "timeout": 5000
+            },
+            "parameters": {
+                "commands": [
+                    "sleep 10"
                 ],
                 "parser": "^(?P<test_case_id>[^:]+):\\s*(?P<message>w+)\\s+(?P<units>\\w+)\\s+(?P<result>\\w+)",
                 "timeout": 5000
