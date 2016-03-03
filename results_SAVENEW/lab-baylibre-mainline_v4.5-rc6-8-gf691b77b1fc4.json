@@ -1,0 +1,10 @@
+{
+    "7175": {
+        "bundle": "41cee187f4f4c81f21a82b1a6e226cd0ca95de55", 
+        "result": "PASS"
+    }, 
+    "duration": 101.7020571231842, 
+    "server": "http://lava.baylibre.com:10080/RPC2/", 
+    "token": "n4q5ksdmahr600i5aa4h38taobfexu939gg1c53xgz89iuce25cc98pouy06iypqm0kk8l58luu4ukgzsnkf6fef4afma3f38qijw0lcfnxgz4wtdx152j90a6r0hqxu", 
+    "username": "powerci"
+}

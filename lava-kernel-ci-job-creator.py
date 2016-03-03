@@ -814,9 +814,9 @@ def setup_job_dir(arg):
     print 'Setting up JSON output directory at: ' + str(arg)
     if not os.path.exists(arg):
         os.makedirs(arg)
-    else:
-        shutil.rmtree(arg)
-        os.makedirs(arg)
+#    else:
+#        shutil.rmtree(arg)
+#        os.makedirs(arg)
     directory = arg
     print 'Done setting up JSON output directory'
 
