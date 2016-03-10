@@ -256,26 +256,22 @@ def boot_report(config):
                 #  we create a short uuid based on the first segment.
                 # see lava-dispatcher/lava_dispatcher/actions/lava_command.py
                 #
+                    power_test = {}
+                    power_test['data'] = test_results['analyzer_assigned_uuid'].split('-',1)[0]
+                    power_test['filename'] = "data.csv"
+                    power_metrics= ["vbus_max", "energy", "power_min", \
+                                "power_max", "power_avg", "current_min", "current_max "]
                     for test in test_results['test_results']:
-                        if test['test_case_id'].startswith("hook#"):
+                        if test['test_case_id'] in power_metrics:
 			   ## TODO handle many attachments and power stats, but this requires a
                            # POWERCI API change
                            output = test['measurement']
-                           try:
-                             power_test = {}
-                             power_test['data'] = test['test_case_id'].split('#')[1]
-                             power_test['voltage_max'] = re.search(r'\bvmax=([\d.]+)', output).group(1)
-                             power_test['current_max'] = re.search(r'\bcmax=([\d.]+)', output).group(1)
-                             power_test['current_min'] = re.search(r'\bcmin=([\d.]+)', output).group(1)
-                             power_test['power_max'] = re.search(r'\bpmax=([\d.]+)', output).group(1)
-                             power_test['power_min'] = re.search(r'\bpmin=([\d.]+)', output).group(1)
-                             power_test['power_avg'] = re.search(r'\bpavg=([\d.]+)', output).group(1)
-                             power_test['energy'] = re.search(r'\benergy=([\d.]+)', output).group(1)
-                             power_test['filename'] = "data.csv"
-                             power_stats.append(power_test)
-                           except:
-                             pass
+                           power_test[test['test_case_id']] = test['measurement']
+
+                    power_stats.append(power_test)
                     boot_meta['power_stats'] = power_stats
+                    print boot_meta['power_stats']
+
             if utils.in_bundle_attributes(bundle_attributes, 'kernel.defconfig'):
                 print bundle_attributes['kernel.defconfig']
             if utils.in_bundle_attributes(bundle_attributes, 'target'):
