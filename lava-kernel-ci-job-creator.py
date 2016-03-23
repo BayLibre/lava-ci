@@ -136,7 +136,11 @@ meson8b_odroidc1 = {'device_type': 'meson8b-odroidc1',
                             'generic-arm-dtb-kernel-ci-ltp-mm-template.json',
                             'generic-arm-dtb-kernel-ci-ltp-syscalls-template.json',
                             'generic-arm-dtb-kernel-ci-kselftest-template.json',
-                            'generic-arm-dtb-kernel-ci-hackbench-template.json'],
+                            'generic-arm-dtb-kernel-ci-hackbench-template.json',
+			    'generic-arm-dtb-kernel-ci-IDLE-template.json',
+			    'generic-arm-dtb-kernel-ci-LMBENCH-template.json',
+			    'generic-arm-dtb-kernel-ci-SUSPENDRESUME-template.json'
+		],
               'defconfig_blacklist': ['arm-allmodconfig'],
               'kernel_blacklist': [],
               'nfs_blacklist': [],
@@ -149,6 +153,9 @@ beaglebone_black = {'device_type': 'beaglebone-black',
                                   'generic-arm-dtb-kernel-ci-boot-nfs-mp-template.json',
                                   'generic-arm-dtb-kernel-ci-ltp-mm-template.json',
                                   'generic-arm-dtb-kernel-ci-ltp-syscalls-template.json',
+			    'generic-arm-dtb-kernel-ci-IDLE-template.json',
+			    'generic-arm-dtb-kernel-ci-LMBENCH-template.json',
+			    'generic-arm-dtb-kernel-ci-SUSPENDRESUME-template.json',
                                   'generic-arm-dtb-kernel-ci-kselftest-template.json',
                                   'generic-arm-dtb-kernel-ci-hackbench-template.json'],
                     'defconfig_blacklist': ['arm-allmodconfig'],
@@ -189,6 +196,9 @@ omap3_overo_storm_tobi = {'device_type': 'omap3-overo-storm-tobi',
 panda_es = {'device_type': 'panda-es',
             'templates': ['generic-arm-dtb-kernel-ci-boot-template.json',
                           'generic-arm-dtb-kernel-ci-kselftest-template.json',
+			   'generic-arm-dtb-kernel-ci-IDLE-template.json',
+			   'generic-arm-dtb-kernel-ci-LMBENCH-template.json',
+			   'generic-arm-dtb-kernel-ci-SUSPENDRESUME-template.json',
                           'generic-arm-dtb-kernel-ci-hackbench-template.json'],
             'defconfig_blacklist': ['arm-allmodconfig'],
             'kernel_blacklist': [],
@@ -893,10 +903,12 @@ def create_jobs(base_url, kernel, plans, platform_list, targets, priority):
                 elif not any([x for x in defconfigs if x == defconfig]) and plan not in ['boot', 'power']:
                     print '%s has been omitted from the %s test plan. Skipping JSON creation.' % (defconfig, plan)
                 else:
+                    job_num = 0
                     for template in device_templates:
                         job_name = tree + '-' + kernel_version + '-' + defconfig[:100] + '-' + platform_name + '-' + device_type + '-' + plan
-                        job_json = directory + '/' + job_name + '.json'
+                        job_json = directory + '/' + job_name + str(job_num) + '.json'
                         template_file = cwd + '/templates/' + plan + '/' + str(template)
+                        job_num += 1
                         if os.path.exists(template_file):
                             with open(job_json, 'wt') as fout:
                                 with open(template_file, "rt") as fin:
@@ -952,6 +964,7 @@ def create_jobs(base_url, kernel, plans, platform_list, targets, priority):
                                             tmp = tmp.replace('{priority}', 'high')
                                         fout.write(tmp)
                             print 'JSON Job created: jobs/%s' % job_name
+                            
 
 
 def walk_url(url, plans=None, arch=None, targets=None, priority=None):

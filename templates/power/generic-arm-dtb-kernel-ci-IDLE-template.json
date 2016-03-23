@@ -11,14 +11,14 @@
                 "kernel.endian": "{endian}",
                 "kernel.defconfig": "{defconfig}",
                 "platform.fastboot": "{fastboot}",
-                "test.plan": "{test_plan}"
+                "test.plan": "{test_plan}",
+                "test.desc": "Idle power test"
             },
             "parameters": {
                 "dtb": "{dtb_url}",
                 "kernel": "{kernel_url}",
                 "overlays": ["{modules_url}"],
-                "ramdisk": "http://storage.kernelci.org/images/rootfs/buildroot/armel/rootfs.cpio.gz",
-                "bootloadertype": "cfe"
+                "ramdisk": "http://storage.kernelci.org/images/rootfs/buildroot/armel/rootfs.cpio.gz"
             }
         },
         {
@@ -28,16 +28,7 @@
             "command": "lava_command_run",
             "parameters": {
                 "commands": [
-                    "sleep 10"   
-                ],
-                "parser": "^(?P<test_case_id>[^:]+):\\s*(?P<message>w+)\\s+(?P<units>\\w+)\\s+(?P<result>\\w+)",
-                "timeout": 5000
-            },
-            "parameters": {
-                "commands": [
-                    "uname -a",
-                    "ps",
-		    "ls -al"
+                    "sleep 10"
                 ],
                 "parser": "^(?P<test_case_id>[^:]+):\\s*(?P<message>w+)\\s+(?P<units>\\w+)\\s+(?P<result>\\w+)",
                 "timeout": 5000

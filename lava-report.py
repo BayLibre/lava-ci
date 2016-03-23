@@ -164,6 +164,7 @@ def boot_report(config):
         fastboot = None
         fastboot_cmd = None
         test_plan = None
+        test_desc = None
         job_file = ''
         dt_test = None
         dt_test_result = None
@@ -239,6 +240,7 @@ def boot_report(config):
         if bundle is not None:
             json_bundle = connection.dashboard.get(bundle)
             bundle_data = json.loads(json_bundle['content'])
+            bundle_attributes = bundle_data['test_runs'][-1]['attributes']
             # Get the boot data from LAVA
             for test_results in bundle_data['test_runs']:
                 # Check for the LAVA self boot test
@@ -249,7 +251,6 @@ def boot_report(config):
                             kernel_boot_time = test['measurement']
                         if test['test_case_id'] == 'test_kernel_boot_time':
                             kernel_boot_time = test['measurement']
-                    bundle_attributes = bundle_data['test_runs'][-1]['attributes']
                 # check for a PowerCI attachement UUID
 		if test_results['test_id'] == 'lava-command':
                 ## using this uuid on lava side to upload to the attachments folder
@@ -263,11 +264,10 @@ def boot_report(config):
                                 "power_max", "power_avg", "current_min", "current_max "]
                     for test in test_results['test_results']:
                         if test['test_case_id'] in power_metrics:
-			   ## TODO handle many attachments and power stats, but this requires a
-                           # POWERCI API change
-                           output = test['measurement']
-                           power_test[test['test_case_id']] = test['measurement']
-
+			    ## TODO handle many attachments and power stats, but this requires a
+                            # POWERCI API change
+                            output = test['measurement']
+                            power_test[test['test_case_id']] = test['measurement']
                     power_stats.append(power_test)
                     boot_meta['power_stats'] = power_stats
                     print boot_meta['power_stats']
@@ -311,6 +311,8 @@ def boot_report(config):
                 boot_retries = int(bundle_attributes['boot_retries'])
             if utils.in_bundle_attributes(bundle_attributes, 'test.plan'):
                 test_plan = bundle_attributes['test.plan']
+            if utils.in_bundle_attributes(bundle_attributes, 'test.brief'):
+                test_desc = bundle_attributes['test.brief']
 
         # Check if we found efi-rtc
         if test_plan == 'boot-kvm-uefi' and not efi_rtc:
@@ -408,6 +410,9 @@ def boot_report(config):
             # dedicated contents for power metrics for instance
             #
             boot_meta['test_plan'] = test_plan
+
+            # Add searchable brief description or keyword
+            boot_meta['test_desc'] = test_desc
 
             if board_offline and result == 'FAIL':
                 boot_meta['boot_result'] = 'OFFLINE'

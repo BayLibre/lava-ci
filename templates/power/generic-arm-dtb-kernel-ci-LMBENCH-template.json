@@ -7,37 +7,27 @@
                 "image.url": "{image_url}",
                 "kernel.tree": "{tree}",
                 "kernel.version": "{kernel_version}",
+                "device.tree": "{device_tree}",
                 "kernel.endian": "{endian}",
                 "kernel.defconfig": "{defconfig}",
                 "platform.fastboot": "{fastboot}",
-                "test.plan": "{test_plan}"
+                "test.plan": "{test_plan}",
+                "test.desc": "LMBENCH Hackbench power test"
             },
             "parameters": {
+                "dtb": "{dtb_url}",
                 "kernel": "{kernel_url}",
                 "overlays": ["{modules_url}"],
-                "ramdisk": "http://storage.kernelci.org/images/rootfs/buildroot/armel/rootfs.cpio.gz"
+                "nfsrootfs": "http://releases.linaro.org/15.06/openembedded/images/lng-armv7a/linaro-image-lng-genericarmv7a-20150618-335.rootfs.tar.gz"
             }
-        },
-        {
-            "command": "boot_linaro_image"
         },
         {
             "command": "lava_command_run",
             "parameters": {
                 "commands": [
-                    "uname -a",
-                    "ps",
-		    "ls -al"
+			"for i in {1..1000}; do timeout 10s hackbench | tee -a hackbench_res.txt; done"
                 ],
-                "parser": "^(?P<test_case_id>[^:]+):\\s*(?P<message>w+)\\s+(?P<units>\\w+)\\s+(?P<result>\\w+)",
-                "timeout": 5000
-            },
-            "parameters": {
-                "commands": [
-                    "sleep 10"
-                ],
-                "parser": "^(?P<test_case_id>[^:]+):\\s*(?P<message>w+)\\s+(?P<units>\\w+)\\s+(?P<result>\\w+)",
-                "timeout": 5000
+                "timeout": 1810
             }
         },
         {
@@ -52,5 +42,5 @@
     "job_name": "{job_name}",
     "logging_level": "DEBUG",
     "priority": "{priority}",
-    "timeout": 18000
+    "timeout": 1811
 }

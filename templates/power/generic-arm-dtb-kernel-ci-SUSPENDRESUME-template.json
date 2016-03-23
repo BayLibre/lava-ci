@@ -11,7 +11,8 @@
                 "kernel.endian": "{endian}",
                 "kernel.defconfig": "{defconfig}",
                 "platform.fastboot": "{fastboot}",
-                "test.plan": "{test_plan}"
+                "test.plan": "{test_plan}",
+                "test.desc": "Suspend/Resume from RTC power test"
             },
             "parameters": {
                 "dtb": "{dtb_url}",
@@ -27,16 +28,8 @@
             "command": "lava_command_run",
             "parameters": {
                 "commands": [
-                    "uname -a",
-                    "ps",
-		    "ls -al"
-                ],
-                "parser": "^(?P<test_case_id>[^:]+):\\s*(?P<message>w+)\\s+(?P<units>\\w+)\\s+(?P<result>\\w+)",
-                "timeout": 5000
-            },
-            "parameters": {
-                "commands": [
-                    "sleep 10"   
+                    "echo +10  > /sys/class/rtc/rtc0/wakealarm",
+                    "echo mem > /sys/power/state"
                 ],
                 "parser": "^(?P<test_case_id>[^:]+):\\s*(?P<message>w+)\\s+(?P<units>\\w+)\\s+(?P<result>\\w+)",
                 "timeout": 5000
