@@ -261,7 +261,7 @@ def boot_report(config):
                     power_test['data'] = test_results['analyzer_assigned_uuid'].split('-',1)[0]
                     power_test['filename'] = "data.csv"
                     power_metrics= ["vbus_max", "energy", "power_min", \
-                                "power_max", "power_avg", "current_min", "current_max "]
+                                "power_max", "power_avg", "current_min", "current_max"]
                     for test in test_results['test_results']:
                         if test['test_case_id'] in power_metrics:
 			    ## TODO handle many attachments and power stats, but this requires a
@@ -311,8 +311,8 @@ def boot_report(config):
                 boot_retries = int(bundle_attributes['boot_retries'])
             if utils.in_bundle_attributes(bundle_attributes, 'test.plan'):
                 test_plan = bundle_attributes['test.plan']
-            if utils.in_bundle_attributes(bundle_attributes, 'test.brief'):
-                test_desc = bundle_attributes['test.brief']
+            if utils.in_bundle_attributes(bundle_attributes, 'test.desc'):
+                test_desc = bundle_attributes['test.desc']
 
         # Check if we found efi-rtc
         if test_plan == 'boot-kvm-uefi' and not efi_rtc:

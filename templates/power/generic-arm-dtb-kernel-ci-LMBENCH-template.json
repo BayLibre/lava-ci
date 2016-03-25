@@ -25,7 +25,7 @@
             "command": "lava_command_run",
             "parameters": {
                 "commands": [
-			"for i in {1..1000}; do timeout 10s hackbench | tee -a hackbench_res.txt; done"
+			"hackbench | tee -a hackbench_res.txt"
                 ],
                 "timeout": 1810
             }

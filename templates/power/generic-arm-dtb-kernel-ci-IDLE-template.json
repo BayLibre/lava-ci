@@ -28,7 +28,11 @@
             "command": "lava_command_run",
             "parameters": {
                 "commands": [
-                    "sleep 10"
+                    	"for i in `seq 1 10005`; do echo $i > /dev/null ; done &",
+                    	"for i in `seq 1 10005`; do echo $i > /dev/null ; done &",
+                    	"for i in `seq 1 10005`; do echo $i > /dev/null ; done &",
+                    	"for i in `seq 1 10005`; do echo $i > /dev/null ; done &",
+			"sleep 10"
                 ],
                 "parser": "^(?P<test_case_id>[^:]+):\\s*(?P<message>w+)\\s+(?P<units>\\w+)\\s+(?P<result>\\w+)",
                 "timeout": 5000
