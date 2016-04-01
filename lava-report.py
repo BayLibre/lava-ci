@@ -414,6 +414,10 @@ def boot_report(config):
             # Add searchable brief description or keyword
             boot_meta['test_desc'] = test_desc
 
+            # Add lava bundle sha1 to link back from PowerCI to lava.
+            boot_meta['lava_bundle'] = bundle
+            print "lava_bundle= %s" % str(bundle)
+
             if board_offline and result == 'FAIL':
                 boot_meta['boot_result'] = 'OFFLINE'
                 #results[kernel_defconfig]['result'] = 'OFFLINE'
