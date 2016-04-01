@@ -12,7 +12,7 @@
                 "kernel.defconfig": "{defconfig}",
                 "platform.fastboot": "{fastboot}",
                 "test.plan": "{test_plan}",
-                "test.desc": "Idle power test"
+                "test.desc": "Idle/Busy sequences"
             },
             "parameters": {
                 "dtb": "{dtb_url}",

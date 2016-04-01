@@ -12,7 +12,7 @@
                 "kernel.defconfig": "{defconfig}",
                 "platform.fastboot": "{fastboot}",
                 "test.plan": "{test_plan}",
-                "test.desc": "Suspend/Resume from RTC"
+                "test.desc": "MP3 decode"
             },
             "parameters": {
                 "dtb": "{dtb_url}",
@@ -28,9 +28,8 @@
             "command": "lava_command_run",
             "parameters": {
                 "commands": [
-                    "echo 'faking (wip) a suspend/resume'",
-                    "echo +10  > /sys/class/rtc/rtc0/wakealarm",
-                    "echo mem > /sys/power/state"
+                    	"echo 'faking an mp3 decode with some file-based computation'",
+			"find /lib  -not -type d | xargs md5sum &> /dev/null"
                 ],
                 "parser": "^(?P<test_case_id>[^:]+):\\s*(?P<message>w+)\\s+(?P<units>\\w+)\\s+(?P<result>\\w+)",
                 "timeout": 5000
