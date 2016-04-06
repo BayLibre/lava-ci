@@ -312,7 +312,7 @@ def boot_report(config):
             if utils.in_bundle_attributes(bundle_attributes, 'test.plan'):
                 test_plan = bundle_attributes['test.plan']
             if utils.in_bundle_attributes(bundle_attributes, 'test.desc'):
-                test_desc = bundle_attributes['test.desc']
+                test_desc = bundle_attributes['test.desc'].replace(" power test",'')
 
         # Check if we found efi-rtc
         if test_plan == 'boot-kvm-uefi' and not efi_rtc:
