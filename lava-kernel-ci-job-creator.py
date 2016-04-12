@@ -52,8 +52,7 @@ arndale = {'device_type': 'arndale',
            'templates': ['generic-arm-dtb-kernel-ci-boot-template.json',
                          'generic-arm-dtb-kernel-ci-kselftest-template.json',
                          'generic-arm-dtb-kernel-ci-hackbench-template.json'],
-           'defconfig_blacklist': ['arm-allmodconfig',
-                                   'arm-multi_v7_defconfig+CONFIG_SMP=n'],
+           'defconfig_blacklist': ['arm-allmodconfig'],
            'kernel_blacklist': [],
            'nfs_blacklist': [],
            'lpae': True,
@@ -131,12 +130,33 @@ odroid_x2 = {'device_type': 'odroid-x2',
              'lpae': False,
              'fastboot': False}
 
+meson8b_odroidc1 = {'device_type': 'meson8b-odroidc1',
+              'templates': ['generic-arm-dtb-kernel-ci-boot-template.json',
+                            'generic-arm-dtb-kernel-ci-boot-nfs-template.json',
+                            'generic-arm-dtb-kernel-ci-ltp-mm-template.json',
+                            'generic-arm-dtb-kernel-ci-ltp-syscalls-template.json',
+                            'generic-arm-dtb-kernel-ci-kselftest-template.json',
+                            'generic-arm-dtb-kernel-ci-hackbench-template.json',
+			    'generic-arm-dtb-kernel-ci-IDLE-template.json',
+			    'generic-arm-dtb-kernel-ci-LMBENCH-template.json',
+			    'generic-arm-dtb-kernel-ci-SUSPENDRESUME-template.json'
+		],
+              'defconfig_blacklist': ['arm-allmodconfig'],
+              'kernel_blacklist': [],
+              'nfs_blacklist': [],
+              'lpae': False,
+              'fastboot': False}
+
 beaglebone_black = {'device_type': 'beaglebone-black',
                     'templates': ['generic-arm-dtb-kernel-ci-boot-template.json',
                                   'generic-arm-dtb-kernel-ci-boot-nfs-template.json',
                                   'generic-arm-dtb-kernel-ci-boot-nfs-mp-template.json',
                                   'generic-arm-dtb-kernel-ci-ltp-mm-template.json',
                                   'generic-arm-dtb-kernel-ci-ltp-syscalls-template.json',
+			    'generic-arm-dtb-kernel-ci-IDLE-template.json',
+			    'generic-arm-dtb-kernel-ci-LMBENCH-template.json',
+			    'generic-arm-dtb-kernel-ci-SUSPENDRESUME-template.json',
+			    'generic-arm-dtb-kernel-ci-MP3-DECODE-FAKE-template.json',
                                   'generic-arm-dtb-kernel-ci-kselftest-template.json',
                                   'generic-arm-dtb-kernel-ci-hackbench-template.json'],
                     'defconfig_blacklist': ['arm-allmodconfig'],
@@ -177,6 +197,10 @@ omap3_overo_storm_tobi = {'device_type': 'omap3-overo-storm-tobi',
 panda_es = {'device_type': 'panda-es',
             'templates': ['generic-arm-dtb-kernel-ci-boot-template.json',
                           'generic-arm-dtb-kernel-ci-kselftest-template.json',
+			   'generic-arm-dtb-kernel-ci-IDLE-template.json',
+			   'generic-arm-dtb-kernel-ci-LMBENCH-template.json',
+			   'generic-arm-dtb-kernel-ci-SUSPENDRESUME-template.json',
+			   'generic-arm-dtb-kernel-ci-MP3-DECODE-FAKE-template.json',
                           'generic-arm-dtb-kernel-ci-hackbench-template.json'],
             'defconfig_blacklist': ['arm-allmodconfig'],
             'kernel_blacklist': [],
@@ -340,16 +364,6 @@ utilite_pro = {'device_type': 'utilite-pro',
                'nfs_blacklist': [],
                'lpae': False,
                'fastboot': False}
-
-meson8b_odroidc1 = {'device_type': 'meson8b-odroidc1',
-                    'templates': ['generic-arm-dtb-kernel-ci-boot-template.json',
-                                  'generic-arm-dtb-kernel-ci-kselftest-template.json',
-                                  'generic-arm-dtb-kernel-ci-hackbench-template.json'],
-                    'defconfig_blacklist': ['arm-allmodconfig'],
-                    'kernel_blacklist': [],
-                    'nfs_blacklist': [],
-                    'lpae': False,
-                    'fastboot': False}
 
 snowball = {'device_type': 'snowball',
             'templates': ['generic-arm-dtb-kernel-ci-boot-template.json',
@@ -541,6 +555,18 @@ qemu_arm_cortex_a15_legacy = {'device_type': 'qemu-arm-cortex-a15',
                               'lpae': True,
                               'fastboot': False}
 
+qemu_arm = {'device_type': 'qemu-arm',
+            'templates': ['generic-arm-kernel-ci-boot-template.json',
+                          'generic-arm-dtb-kernel-ci-kselftest-template.json'],
+            'defconfig_blacklist': ['arm-allmodconfig'],
+            'kernel_blacklist': ['v3.10',
+                                 'lsk-v3.10',
+                                 'v3.12',
+                                 'lsk-v3.12'],
+            'nfs_blacklist': [],
+            'lpae': False,
+            'fastboot': False}
+
 qemu_aarch64 = {'device_type': 'qemu-aarch64',
                 'templates': ['generic-arm64-kernel-ci-boot-template.json',
                               'generic-arm64-kernel-ci-kselftest-template.json'],
@@ -720,11 +746,8 @@ x86_atom330 = {'device_type': 'x86-atom330',
 
 minnowboard_max_E3825 = {'device_type': 'minnowboard-max-E3825',
                          'templates': ['generic-x86-kernel-ci-boot-template.json',
-                                       'generic-x86-kernel-ci-cyclictest-template.json',
                                        'generic-x86-kernel-ci-kselftest-template.json',
-                                       'generic-x86-kernel-ci-hackbench-template.json',
-                                       'generic-x86-kernel-ci-lmbench-template.json',
-                                       'generic-x86-kernel-ci-ltp-realtime-template.json'],
+                                       'generic-x86-kernel-ci-hackbench-template.json'],
                          'defconfig_blacklist': ['x86-i386_defconfig',
                                                  'x86-allnoconfig',
                                                  'x86-allmodconfig',
@@ -762,6 +785,7 @@ device_map = {'bcm2835-rpi-b-plus.dtb': [bcm2835_rpi_b_plus],
               'exynos5422-odroidxu3.dtb': [odroid_xu3],
               'exynos4412-odroidu3.dtb': [odroid_u2],
               'exynos4412-odroidx2.dtb': [odroid_x2],
+              'meson8b-odroidc1.dtb': [meson8b_odroidc1],
               'am335x-boneblack.dtb': [beaglebone_black],
               'omap3-beagle-xm.dtb': [beagle_xm],
               'omap3-overo-tobi.dtb': [omap3_overo_tobi],
@@ -777,7 +801,6 @@ device_map = {'bcm2835-rpi-b-plus.dtb': [bcm2835_rpi_b_plus],
               'imx6q-wandboard.dtb': [imx6q_wandboard],
               'imx6q-sabrelite.dtb': [imx6q_sabrelite],
               'imx6q-cm-fx6.dtb': [utilite_pro],
-              'meson8b-odroidc1.dtb': [meson8b_odroidc1],
               'ste-snowball.dtb': [snowball],
               'qcom-apq8084-ifc6540.dtb': [ifc6540],
               'qcom-apq8064-ifc6410.dtb': [ifc6410],
@@ -796,6 +819,7 @@ device_map = {'bcm2835-rpi-b-plus.dtb': [bcm2835_rpi_b_plus],
               'vexpress-v2p-ca15_a7.dtb': [qemu_arm_cortex_a15_a7],
               'vexpress-v2p-ca9.dtb': [qemu_arm_cortex_a9],
               'vexpress-v2p-ca9-legacy': [qemu_arm_cortex_a9_legacy],
+              'qemu-arm-legacy': [qemu_arm],
               'qemu-aarch64-legacy': [qemu_aarch64],
               'apq8016-sbc.dtb': [apq8016_sbc],
               'apm-mustang.dtb': [apm_mustang, apm_mustang_kvm],
@@ -814,6 +838,9 @@ def setup_job_dir(arg):
     print 'Setting up JSON output directory at: ' + str(arg)
     if not os.path.exists(arg):
         os.makedirs(arg)
+
+#support multiple arch a a job batch
+#
 #    else:
 #        shutil.rmtree(arg)
 #        os.makedirs(arg)
@@ -849,7 +876,7 @@ def create_jobs(base_url, kernel, plans, platform_list, targets, priority):
             test_type = None
             defconfigs = []
             for plan in plans:
-                if plan != 'boot':
+                if plan not in ['boot', 'power']:
                         config = ConfigParser.ConfigParser()
                         try:
                             config.read(cwd + '/templates/' + plan + '/' + plan + '.ini')
@@ -878,13 +905,15 @@ def create_jobs(base_url, kernel, plans, platform_list, targets, priority):
                     print '%s has been blacklisted. Skipping JSON creation' % kernel_version
                 elif targets is not None and device_type not in targets:
                     print '%s device type has been omitted. Skipping JSON creation.' % device_type
-                elif not any([x for x in defconfigs if x == defconfig]) and plan != 'boot':
+                elif not any([x for x in defconfigs if x == defconfig]) and plan not in ['boot', 'power']:
                     print '%s has been omitted from the %s test plan. Skipping JSON creation.' % (defconfig, plan)
                 else:
+                    job_num = 0
                     for template in device_templates:
                         job_name = tree + '-' + kernel_version + '-' + defconfig[:100] + '-' + platform_name + '-' + device_type + '-' + plan
-                        job_json = directory + '/' + job_name + '.json'
+                        job_json = directory + '/' + job_name + str(job_num) + '.json'
                         template_file = cwd + '/templates/' + plan + '/' + str(template)
+                        job_num += 1
                         if os.path.exists(template_file):
                             with open(job_json, 'wt') as fout:
                                 with open(template_file, "rt") as fin:
@@ -940,6 +969,7 @@ def create_jobs(base_url, kernel, plans, platform_list, targets, priority):
                                             tmp = tmp.replace('{priority}', 'high')
                                         fout.write(tmp)
                             print 'JSON Job created: jobs/%s' % job_name
+                            
 
 
 def walk_url(url, plans=None, arch=None, targets=None, priority=None):
@@ -969,6 +999,9 @@ def walk_url(url, plans=None, arch=None, targets=None, priority=None):
             if 'zImage' in name and 'arm' in url:
                 kernel = url + name
                 base_url = url
+                # qemu-arm,legacy
+                if 'arm-versatile_defconfig' in url:
+                    legacy_platform_list.append(url + 'qemu-arm-legacy')
             if 'Image' in name and 'arm64' in url:
                 kernel = url + name
                 base_url = url
@@ -988,6 +1021,9 @@ def walk_url(url, plans=None, arch=None, targets=None, priority=None):
             if 'zImage' in name and 'arm' in url:
                 kernel = url + name
                 base_url = url
+                # qemu-arm,legacy
+                if 'arm-versatile_defconfig' in url:
+                    legacy_platform_list.append(url + 'qemu-arm-legacy')
             if name.endswith('.dtb') and name in device_map:
                 if base_url and base_url in url:
                     legacy_platform_list.append(url + name)
