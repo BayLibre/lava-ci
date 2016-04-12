@@ -141,6 +141,12 @@ def boot_report(config):
         api_url = None
         arch = None
         board_instance = None
+
+        # this is the folder name (uuid) in /var/.../kernel-ci
+        # where lava uploads attachments.
+        #
+        power_stats = None
+
         boot_retries = 0
         kernel_defconfig_full = None
         kernel_defconfig = None
@@ -156,6 +162,7 @@ def boot_report(config):
         fastboot = None
         fastboot_cmd = None
         test_plan = None
+        test_desc = None
         job_file = ''
         dt_test = None
         dt_test_result = None
@@ -230,6 +237,7 @@ def boot_report(config):
         if bundle is not None:
             json_bundle = connection.dashboard.get(bundle)
             bundle_data = json.loads(json_bundle['content'])
+            bundle_attributes = bundle_data['test_runs'][-1]['attributes']
             # Get the boot data from LAVA
             for test_results in bundle_data['test_runs']:
                 # Check for the LAVA self boot test
@@ -240,7 +248,14 @@ def boot_report(config):
                             kernel_boot_time = test['measurement']
                         if test['test_case_id'] == 'test_kernel_boot_time':
                             kernel_boot_time = test['measurement']
-                    bundle_attributes = bundle_data['test_runs'][-1]['attributes']
+                # check for a PowerCI attachement UUID
+                if test_results['test_id'] == 'lava-command':
+                ## using this uuid on lava side to upload to the attachments folder
+                #  we create a short uuid based on the first segment.
+                # see lava-dispatcher/lava_dispatcher/actions/lava_command.py
+                #
+                    boot_meta['power_stats'] = test_results['analyzer_assigned_uuid'].split('-',1)[0]
+
             if utils.in_bundle_attributes(bundle_attributes, 'kernel.defconfig'):
                 print bundle_attributes['kernel.defconfig']
             if utils.in_bundle_attributes(bundle_attributes, 'target'):
@@ -280,6 +295,8 @@ def boot_report(config):
                 boot_retries = int(bundle_attributes['boot_retries'])
             if utils.in_bundle_attributes(bundle_attributes, 'test.plan'):
                 test_plan = bundle_attributes['test.plan']
+            if utils.in_bundle_attributes(bundle_attributes, 'test.desc'):
+                test_desc = bundle_attributes['test.desc'].replace(" power test",'')
 
         # Check if we found efi-rtc
         if test_plan == 'boot-kvm-uefi' and not efi_rtc:
@@ -371,6 +388,19 @@ def boot_report(config):
             boot_meta['kernel'] = kernel_version
             boot_meta['job'] = kernel_tree
             boot_meta['board'] = platform_name
+
+            # Add test plan to meta-data, to let the web feature
+            # dedicated contents for power metrics for instance
+            #
+            boot_meta['test_plan'] = test_plan
+
+            # Add searchable brief description or keyword
+            boot_meta['test_desc'] = test_desc
+
+            # Add lava bundle sha1 to link back from PowerCI to lava.
+            boot_meta['lava_bundle'] = bundle
+            print "lava_bundle= %s" % str(bundle)
+
             if board_offline and result == 'FAIL':
                 boot_meta['boot_result'] = 'OFFLINE'
                 #results[kernel_defconfig]['result'] = 'OFFLINE'
@@ -736,6 +766,8 @@ def test_report(config):
                     test_suite = bundle_attributes['test.suite']
                 if utils.in_bundle_attributes(bundle_attributes, 'test.type'):
                     test_type = bundle_attributes['test.type']
+                if utils.in_bundle_attributes(bundle_attributes, 'test.desc'):
+                    test_desc = bundle_attributes['test.desc'].replace(" power test",'')
 
             # Check if we found efi-rtc
             if test_plan == 'boot-kvm-uefi' and not efi_rtc:
