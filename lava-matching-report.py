@@ -8,7 +8,7 @@
 # A suitable  job has a non empty bundles, and optionally contains
 # the string passed with "--matching" in it's job name.
 #
-# Usage ./lava-all-jobs.py  --section baylibre
+# Usage ./lava-matching-report.py  --section baylibre --matching $(subst, /,-,$(TAG))
 
 import os
 import json
@@ -23,6 +23,8 @@ POWER_METRICS = ["vbus_max", "energy", "power_min",
 ## FIXME: config, temporary ?
 ATTACH_FOLDER = "/var/www/images/kernel-ci/attachments/"
 ATTACH_FILE = "data.csv"
+MATCHING_BOOTS = "matching-boots.json"
+MATCHING_TESTS = "matching-tests.json"
 
 def main(args):
     config = configuration.get_config(args)
@@ -36,8 +38,19 @@ def main(args):
 
     bundles = connection.dashboard.bundles(bundle_stream)
 
-    results_directory = os.getcwd() + '/results'
-    utils.mkdir(results_directory)
+    folder = os.getcwd() + '/results'
+    utils.mkdir(folder)
+
+    matching = None
+    if args.has_key("matching"):
+        matching = args['matching']
+        print "Searching bundles named after '%s'..." % matching
+
+    generate_matching_boots(config, connection, bundles, folder, matching)
+    
+
+
+def generate_matching_boots(config, connection, bundles, folder, matching):
 
     powerci_json = {}
     powerci_json['username'] = config.get("username")
@@ -45,14 +58,17 @@ def main(args):
     powerci_json['server'] = config.get("server")
     powerci_json['duration'] = "0"
 
+    total_bundles = len(bundles)
+
     for bundle in bundles:
         if bundle['associated_job'] == "NA":
+            bundles.remove(bundle)
             continue
 
-        if args.has_key("matching") and args['matching'] is not None:
-            if args['matching'] in bundle['content_filename']:
-                print "found %s" % bundle['content_filename']
-            else:
+        if matching is not None:
+            if matching not in bundle['content_filename']:
+#                print "remove" + str(bundle['content_filename'])
+                bundles.remove(bundle)
                 continue
 
         json_bundle = connection.dashboard.get(bundle['content_sha1'])
@@ -91,6 +107,7 @@ def main(args):
                         found_suitable = True
 
         if not found_suitable:
+            bundles.remove(bundle)
             continue
 
         data = {}
@@ -98,7 +115,7 @@ def main(args):
         data['result'] = "PASS"
         powerci_json[number] = data
 
-    utils.write_json("all.json", results_directory, powerci_json)
+    utils.write_json(MATCHING_BOOTS, folder, powerci_json)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
