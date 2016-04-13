@@ -133,7 +133,7 @@ def boot_report(config):
     results_directory = os.getcwd() + '/results'
     results = {}
     dt_tests = False
-    utils.mkdir(results_directory)
+    #utils.mkdir(results_directory)
     for job_id in jobs:
         print 'Job ID: %s' % job_id
         # Init
@@ -485,7 +485,7 @@ def boot_report(config):
         total = passed + failed
         if config.get("lab"):
             report_directory = os.path.join(results_directory, config.get("lab"))
-            utils.mkdir(report_directory)
+#            utils.mkdir(report_directory)
         else:
             report_directory = results_directory
         with open(os.path.join(report_directory, boot), 'a') as f:
@@ -648,8 +648,10 @@ def test_report(config):
     results_directory = os.getcwd() + '/results'
     results = {}
     duration = 0.0
-    utils.mkdir(results_directory)
+#    utils.mkdir(results_directory)
     for test in config.get('test'):
+        print "config.get('test') = %s" % test
+        print "results_directory = %s" % results_directory
         connection, jobs, duration_instance = parse_json(test)
         duration += float(duration_instance)
         for job_id in jobs:
@@ -768,6 +770,8 @@ def test_report(config):
                     test_type = bundle_attributes['test.type']
                 if utils.in_bundle_attributes(bundle_attributes, 'test.desc'):
                     test_desc = bundle_attributes['test.desc'].replace(" power test",'')
+                    test_suite = re.sub("[ /]", '-', test_desc)
+                    print "test_suite = %s (from test.desc)" % test_suite
 
             # Check if we found efi-rtc
             if test_plan == 'boot-kvm-uefi' and not efi_rtc:
@@ -920,7 +924,7 @@ def test_report(config):
         total = passed + failed
         if config.get("lab"):
             report_directory = os.path.join(results_directory, config.get("lab"))
-            utils.mkdir(report_directory)
+#            utils.mkdir(report_directory)
         else:
             report_directory = results_directory
         with open(os.path.join(report_directory, boot), 'a') as f:
@@ -1014,16 +1018,18 @@ def main(args):
     config = configuration.get_config(args)
 
     if config.get("boot"):
-        boot_report(config)
+        for f in config.get("boot"):
+            boot_report(config)
     if config.get("test"):
-        test_report(config)
+        for f in config.get("test"):
+            test_report(config)
     exit(0)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", help="configuration for the LAVA server")
     parser.add_argument("--section", default="default", help="section in the LAVA config file")
-    parser.add_argument("--boot", nargs='+', help="creates a kernel-ci boot report from a given json file")
+    parser.add_argument("--boot", help="creates a kernel-ci boot report from a given json file")
     parser.add_argument("--test", nargs='+', help="creates a kernel-ci test report from a given json file")
     parser.add_argument("--lab", help="lab id")
     parser.add_argument("--api", help="api url")
