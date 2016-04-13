@@ -56,7 +56,7 @@ def generate_matching_boots(config, connection, bundles, folder, matching):
     powerci_json['username'] = config.get("username")
     powerci_json['token'] = config.get("token")
     powerci_json['server'] = config.get("server")
-    powerci_json['duration'] = "0"
+    powerci_json['duration'] = 0
 
     total_bundles = len(bundles)
 
