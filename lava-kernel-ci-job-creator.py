@@ -838,9 +838,12 @@ def setup_job_dir(arg):
     print 'Setting up JSON output directory at: ' + str(arg)
     if not os.path.exists(arg):
         os.makedirs(arg)
-    else:
-        shutil.rmtree(arg)
-        os.makedirs(arg)
+
+#support multiple arch a a job batch
+#
+#    else:
+#        shutil.rmtree(arg)
+#        os.makedirs(arg)
     directory = arg
     print 'Done setting up JSON output directory'
 
@@ -909,7 +912,7 @@ def create_jobs(base_url, kernel, plans, platform_list, targets, priority):
                     for template in device_templates:
                         job_name = tree + '-' + kernel_version + '-' + defconfig[:100] + '-' + platform_name + '-' + device_type + '-' + plan
                         job_json = directory + '/' + job_name + str(job_num) + '.json'
-                        template_file = cwd + '/templates/' + plan + '/' + str(template)
+                        template_file = os.getcwd() + '/templates/' + plan + '/' + str(template)
                         job_num += 1
                         if os.path.exists(template_file):
                             with open(job_json, 'wt') as fout:
