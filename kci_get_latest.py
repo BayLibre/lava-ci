@@ -12,10 +12,17 @@ def get_latest_tags(config, kernel, job, defconfig_full, limit=1):
 
     """Return the list of latest kernels tags."""
 
-    if config.get('api') and config.get('token'):
+    if config.get('token'):
         headers = {
             'Authorization': config.get('token')
         }
+    else:
+        print "No token found in config, bailing out."
+        exit(1)
+
+    if config.get('api') is None:
+        print "No api found in config, bailing out."
+        exit(1)
 
     query = "?sort=created_on&sort_order=-1"
 
