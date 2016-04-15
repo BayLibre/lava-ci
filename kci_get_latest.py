@@ -38,14 +38,8 @@ def get_latest_tags(config, kernel, job, defconfig_full, limit=1):
     response = requests.get(api_url, headers=headers)
     data = json.loads(response.content)
 
-    if response.status_code == 404:
-        print "ERROR: page not found"
-        exit(1)
-    if response.status_code == 403:
-        print "ERROR: access forbidden"
-        exit(1)
-    if response.status_code == 500:
-        print "ERROR: internal database error"
+    if response.status_code >= 400:
+        print data
         exit(1)
 
     tags = []
