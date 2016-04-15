@@ -485,7 +485,7 @@ def boot_report(config):
         total = passed + failed
         if config.get("lab"):
             report_directory = os.path.join(results_directory, config.get("lab"))
-#            utils.mkdir(report_directory)
+            utils.mkdir(report_directory)
         else:
             report_directory = results_directory
         with open(os.path.join(report_directory, boot), 'a') as f:
@@ -924,7 +924,7 @@ def test_report(config):
         total = passed + failed
         if config.get("lab"):
             report_directory = os.path.join(results_directory, config.get("lab"))
-#            utils.mkdir(report_directory)
+            utils.mkdir(report_directory)
         else:
             report_directory = results_directory
         with open(os.path.join(report_directory, boot), 'a') as f:
