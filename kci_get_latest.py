@@ -27,7 +27,7 @@ def get_latest_tags(config, kernel, job, defconfig_full, limit=1):
     query = "?sort=created_on&sort_order=-1"
 
     if kernel is not None:
-        query = '?kernel=%s' % kernel
+        query += '&kernel=%s' % kernel
     if job is not None:
         query += '&job=%s' % job
 
@@ -57,7 +57,7 @@ def main(args):
 
     config = configuration.get_config(args)
 
-    tags = get_latest_tags(config, None, "next", "allmodconfig")
+    tags = get_latest_tags(config, None, config.get('tree'), "allmodconfig")
 
     print tags[0]
 
@@ -69,5 +69,6 @@ if __name__ == '__main__':
     PARSER.add_argument("--section", help="section in .lavarc")
     PARSER.add_argument("--api", help="api url")
     PARSER.add_argument("--token", help="authentication token")
+    PARSER.add_argument("--tree", help="kernel tree")
     ARGS = vars(PARSER.parse_args())
     main(ARGS)
