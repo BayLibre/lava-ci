@@ -1,0 +1,52 @@
+{
+    "actions": [
+        {
+            "command": "deploy_linaro_kernel",
+            "metadata": {
+                "image.type": "{image_type}",
+                "image.url": "{image_url}",
+                "kernel.tree": "{tree}",
+                "kernel.version": "{kernel_version}",
+                "device.tree": "{device_tree}",
+                "kernel.endian": "{endian}",
+                "kernel.defconfig": "{defconfig}",
+                "platform.fastboot": "{fastboot}",
+                "test.plan": "{test_plan}",
+                "test.desc": "Suspend/Resume from RTC"
+            },
+            "parameters": {
+                "dtb": "{dtb_url}",
+                "kernel": "{kernel_url}",
+                "overlays": ["{modules_url}"],
+                "ramdisk": "http://storage.kernelci.org/images/rootfs/buildroot/armel/rootfs.cpio.gz"
+            }
+        },
+        {
+            "command": "boot_linaro_image"
+        },
+        {
+            "command": "lava_command_run",
+            "parameters": {
+                "commands": [
+                    "echo 'faking (wip) a suspend/resume'",
+                    "echo +10  > /sys/class/rtc/rtc0/wakealarm",
+                    "echo mem > /sys/power/state"
+                ],
+                "parser": "^(?P<test_case_id>[^:]+):\\s*(?P<message>w+)\\s+(?P<units>\\w+)\\s+(?P<result>\\w+)",
+                "timeout": 5000
+            }
+        },
+        {
+            "command": "submit_results",
+            "parameters": {
+                "server": "LAVA_SERVER",
+                "stream": "BUNDLE_STREAM"
+            }
+        }
+    ],
+    "device_type": "{device_type}",
+    "job_name": "{job_name}",
+    "logging_level": "DEBUG",
+    "priority": "{priority}",
+    "timeout": 18000
+}
