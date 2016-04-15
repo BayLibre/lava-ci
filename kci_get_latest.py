@@ -63,7 +63,9 @@ def main(args):
 
     config = configuration.get_config(args)
 
-    print get_latest_tags(config, None, "next", "allmodconfig", 16)
+    tags = get_latest_tags(config, None, "next", "allmodconfig")
+
+    print tags[0]
 
     exit(0)
 
