@@ -28,12 +28,12 @@
             "command": "lava_command_run",
             "parameters": {
                 "commands": [
-                    "echo 'faking (wip) a suspend/resume'",
+                    "echo 'suspend/resume (when working), 50s timeout'",
                     "echo +10  > /sys/class/rtc/rtc0/wakealarm",
                     "echo mem > /sys/power/state"
                 ],
                 "parser": "^(?P<test_case_id>[^:]+):\\s*(?P<message>w+)\\s+(?P<units>\\w+)\\s+(?P<result>\\w+)",
-                "timeout": 5000
+                "timeout": 50
             }
         },
         {
@@ -48,5 +48,5 @@
     "job_name": "{job_name}",
     "logging_level": "DEBUG",
     "priority": "{priority}",
-    "timeout": 18000
+    "timeout": 1200
 }
