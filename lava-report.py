@@ -685,7 +685,7 @@ def test_report(config):
             kernel_boot_time = None
             boot_failure_reason = None
             test_plan = None
-            test_set = None
+            test_set = "default_set"
             test_suite = None
             test_type = None
             test_vcs_commit = None
@@ -714,16 +714,37 @@ def test_report(config):
                                 test_def_uri = test_results['testdef_metadata']['url']
                             if 'version' in test_results['testdef_metadata']:
                                 test_vcs_commit = test_results['testdef_metadata']['version']
+                    # LAVA adds LAVA_SIGNAL_TESTCASE as another test_case_id, while
+                    # the /TEST API expects something like test_set.test_case[],measurements[]
+		    # A test_case_id w/o measurement will be a new test_case, a measurement
+                    # will be attached to the measurements[] array of the current test_case.
+                    #
+                    # Now, this is a bit unprecise with scenarios like lava-command or
+                    # lava-shell-test doing commands {A,B,C} and logging signals M0 M1 M2:
+                    #  Mx are for instance the various power rails voltage measurements during
+                    #  execution of A+B+C, but lava-test-shell/command show them as test_case_ids
+                    #  each, so we might attach the Mx to the last command, i.e. C.
+                    #  In pratice, this is no big deal IMO.
+                    #
                         for test in test_results['test_results']:
-                            test_case = {}
-                            test_case['name'] = test['test_case_id']
-                            test_case['status'] = test['result'].upper()
                             if 'measurement' in test:
-                                test_case['measurement'] = test['measurement']
-                            if 'units' in test:
-                                test_case['units'] = test['units']
-                            test_case['version'] = '1.0'
-                            test_cases.append(test_case)
+                                if test_cases[-1]:
+                                    measure = {}
+                                    measure['name'] = test['test_case_id']
+                                    measure['measure'] = test['measurement']
+                                    if 'units' in test:
+                                        measure['units'] = test['units']
+                                    # attach Mx to last/current command of test run.
+                                    test_cases[-1]['measurements'].append(measure)
+                            else:
+                                    # new command
+                                    test_case = {}
+                                    test_case['version'] = '1.0'
+                                    test_case['name'] = test['test_case_id']
+                                    test_case['status'] = test['result'].upper()
+                                    test_case['measurements'] = []
+                                    test_cases.append(test_case)
+
                         bundle_attributes = bundle_data['test_runs'][-1]['attributes']
                 if utils.in_bundle_attributes(bundle_attributes, 'kernel.defconfig'):
                     print bundle_attributes['kernel.defconfig']
@@ -871,11 +892,12 @@ def test_report(config):
                         query += '&defconfig_full=%s' % test_meta['defconfig_full']
                     else:
                         query += '&defconfig_full=%s' % test_meta['defconfig']
-                    api_url = urlparse.urljoin(config.get('api'), '/build' + query)
-                    response = requests.get(api_url, headers=headers)
-                    data = json.loads(response.content)
-                    build_id = data['result'][0]['_id']['$oid']
-                    print 'Retrieved build id: %s for %s' % (build_id, data['result'][0]['defconfig'])
+                    # TODO POWERCI api_url = urlparse.urljoin(config.get('api'), '/build' + query)
+                    # TODO POWERCI response = requests.get(api_url, headers=headers)
+                    # TODO POWERCI data = json.loads(response.content)
+                    # TODO POWERCI build_id = data['result'][0]['_id']['$oid']
+                    build_id = "abcde123456"
+                    # TODO POWERCI print 'Retrieved build id: %s for %s' % (build_id, data['result'][0]['defconfig'])
                 test_meta['board'] = platform_name
                 test_meta['build_id'] = build_id
                 test_meta['test_set'] = [{
@@ -895,6 +917,10 @@ def test_report(config):
                     }
                     api_url = urlparse.urljoin(config.get('api'), '/test/suite')
                     response = requests.post(api_url, data=json.dumps(test_meta), headers=headers)
+
+                    # DELME POWERCI
+                    print json.dumps(test_meta)
+
                     if response.status_code == 404:
                         print "ERROR: page not found"
                         exit(1)
