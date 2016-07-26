@@ -1,4 +1,10 @@
 #!/usr/bin/python
+###############################################################################
+## @package kci_get_latest
+# @brief Get the list of latests kernel tags found in kernelci.org
+#
+
+
 """Return the list of latest kernels tags."""
 import sys,os
 
@@ -9,6 +15,17 @@ import requests
 
 from lib import configuration
 
+###############################################################################
+## @brief get the latest tags from api (kernelci.org)
+#
+# @param config input configuration elements
+# @param kernel specific kernel to check
+# @param job kernel branch to check
+# @param defconfig_full config type specific part of kernel to check
+# @param limit (default=1) 
+#
+# @return tag found
+###############################################################################
 def get_latest_tags(config, kernel, job, defconfig_full, limit=1):
     """Return the list of latest kernels tags."""
 
@@ -43,9 +60,14 @@ def get_latest_tags(config, kernel, job, defconfig_full, limit=1):
 
     return tags
 
+###############################################################################
+## @brief global access to execute the script wherever it come from
+#
+# @param args (dict) input arguments
+#
+# @return tag found
+###############################################################################
 def run(args):
-    """Query the list of latest kernels tags."""
-
     config = configuration.get_config(args)
     if config.get('token') is None: 
         raise ValueError("No token found in config")
@@ -57,6 +79,17 @@ def run(args):
     return tags
 
 
+###############################################################################
+## @brief api access from another python script
+#
+# @param api api adress to check
+# @param token token to access api
+# @param config (default=None) config arguments
+# @param section (default=None)
+# @param branch (default=None) 
+#
+# @return tag found or error code = 1
+###############################################################################
 def kci_get_latest(api,token,config=None,section=None,branch=None):
     args = {'api':api,'token':token,'config':config,'section':section,'branch':branch}
     
@@ -67,6 +100,13 @@ def kci_get_latest(api,token,config=None,section=None,branch=None):
         return 1
     
 
+###############################################################################
+## @brief main called via command lines
+#
+# @param args input command line
+#
+# @return None
+###############################################################################
 def main(args):
 
     parser = argparse.ArgumentParser(description='Get latest kernel build from kernelci.org')
@@ -84,5 +124,7 @@ def main(args):
         print "### ERROR ###", str(err)
         sys.exit(1)
 
+###############################################################################
+###############################################################################
 if __name__ == '__main__':
     main(sys.argv[1:])
