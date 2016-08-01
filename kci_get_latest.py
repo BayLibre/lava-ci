@@ -52,7 +52,8 @@ def get_latest_tags(config, kernel, job, defconfig_full, limit=1):
 
     tags = []
     for result in data['result']:
-        tag = result['kernel']
+        tag = os.path.join(result['job'],result['kernel'])
+
         if tag not in tags:
             tags.append(tag)
 
