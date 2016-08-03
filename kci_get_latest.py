@@ -121,7 +121,7 @@ def main(args):
     required = parser.add_argument_group('MANDATORY argument')
     required.add_argument('-a','--api',   dest='api',   required=True, help="API url")
     required.add_argument('-t','--token', dest='token', required=True, help="Authentication token")
-    args = vars(parser.parse_args())
+    args = vars(parser.parse_args(args))
 
     try:
         res=run(args)

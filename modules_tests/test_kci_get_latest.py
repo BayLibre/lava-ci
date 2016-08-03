@@ -106,6 +106,25 @@ class test_kci_get_latest(unittest.TestCase):
     def test_009_kci_get_latest(self):
         res=kci_get_latest.kci_get_latest("","bb4d438a-f412-4c65-9f7c-9daefd253ee7")
         self.assertEqual(res,1)
+
+    def test_010_main(self):
+        pdb.set_trace()
+        args=['-h']
+        with self.assertRaises(SystemExit) as context:
+            kci_get_latest.main(args)
+        self.assertEqual(context.exception.code,0)       
+        
+    def test_011_main(self):
+        args=['']
+        with self.assertRaises(SystemExit) as context:
+            kci_get_latest.main(args)
+        self.assertEqual(context.exception.code,2)       
+        
+    def test_012_main(self):
+        args=['-a',"http://api.kernelci.org"]
+        with self.assertRaises(SystemExit) as context:
+            kci_get_latest.main(args)
+        self.assertEqual(context.exception.code,2)       
         
 
 if __name__=='__main__':
