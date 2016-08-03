@@ -26,7 +26,7 @@ from lib import configuration
 #
 # @return tag found
 ###############################################################################
-def get_latest_tags(config, kernel, job, defconfig_full, limit=1,last=None):
+def get_latest_tags(config, kernel=None, defconfig_full="allmodconfig", limit=1):
     """Return the list of latest kernels tags."""
 
     headers = {
@@ -37,10 +37,10 @@ def get_latest_tags(config, kernel, job, defconfig_full, limit=1,last=None):
 
     if kernel is not None:
         query = '&kernel=%s' % kernel
-    if last is None:
+    if config.get('last') is None:
         query += '&limit=%s' % limit
-        if job is not None:
-            query += '&job=%s' % job
+        if config.get('job') is not None:
+            query += '&job=%s' % config.get('job')
     query += '&defconfig_full=%s' % defconfig_full
     api_url = urlparse.urljoin(config.get('api'), '/build' + query)
 
@@ -56,11 +56,11 @@ def get_latest_tags(config, kernel, job, defconfig_full, limit=1,last=None):
         tag = os.path.join(result['job'],result['kernel'])
 
         if tag not in tags:
-            if job is None:
+            if config.get('job') is None:
                 tags.append(tag)
-            elif job in tag:   
+            elif config.get('job') in tag:   
                 tags.append(tag)
-        if last is not None and tag==last:
+        if config.get('last') is not None and tag==config.get('last'):
             break
 
     return tags
@@ -79,7 +79,7 @@ def run(args):
     if config.get('api') is None: 
         raise ValueError("No api found in config")
 
-    tags = get_latest_tags(config, None, config.get('job'), "allmodconfig",last=config.get('last'))
+    tags = get_latest_tags(config, None )
 
     return tags
 
@@ -113,7 +113,6 @@ def kci_get_latest(api,token,config=None,section=None,job=None,last=None):
 # @return None
 ###############################################################################
 def main(args):
-
     parser = argparse.ArgumentParser(description='Get latest kernel build from kernelci.org')
     parser.add_argument('-c','--config',  dest='config',  help="Configuration for the LAVA server")
     parser.add_argument('-s','--section', dest='section', help="Section in .lavarc")
