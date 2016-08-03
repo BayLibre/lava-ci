@@ -108,7 +108,6 @@ class test_kci_get_latest(unittest.TestCase):
         self.assertEqual(res,1)
 
     def test_010_main(self):
-        pdb.set_trace()
         args=['-h']
         with self.assertRaises(SystemExit) as context:
             kci_get_latest.main(args)
