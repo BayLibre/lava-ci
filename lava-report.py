@@ -735,6 +735,8 @@ def test_report(config):
                                     if 'units' in test:
                                         measure['units'] = test['units']
                                     # attach Mx to last/current command of test run.
+                                    if not test_cases[-1].has_key('measurements'):
+                                        test_cases[-1]['measurements'] = []
                                     test_cases[-1]['measurements'].append(measure)
                             else:
                                     # new command
@@ -742,7 +744,6 @@ def test_report(config):
                                     test_case['version'] = '1.0'
                                     test_case['name'] = test['test_case_id']
                                     test_case['status'] = test['result'].upper()
-                                    test_case['measurements'] = []
                                     test_cases.append(test_case)
 
                         bundle_attributes = bundle_data['test_runs'][-1]['attributes']
