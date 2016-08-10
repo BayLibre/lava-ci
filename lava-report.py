@@ -1030,8 +1030,10 @@ def test_report(config):
                 for result in results_list:
                     f.write('    %s   %s: %s\n' % (result['device_type'], result['test_plan'], result['result']))
                     for test_case in result['test_cases']:
-                        if 'measurement' in test_case:
-                            f.write('         %s: %s %s\n' % (test_case['name'], test_case['measurement'], test_case['units']))
+                        if 'measurements' in test_case:
+                            f.write('         measurements:\n')
+                            for measure in test_case['measurements']:
+                                f.write('             %s: %s %s\n' % (measure['name'], measure['measure'], measure['units']))
                         else:
                             f.write('         %s: %s\n' % (test_case['name'], test_case['status']))
                     f.write('\n')
