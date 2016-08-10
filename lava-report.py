@@ -16,8 +16,6 @@ import requests
 from lib import configuration
 from lib import utils
 
-import pdb 
-
 log2html = 'https://git.linaro.org/people/kevin.hilman/build-scripts.git/blob_plain/HEAD:/log2html.py'
 
 device_map = {'bcm2835-rpi-b-plus':      ['bcm2835-rpi-b-plus', 'bcm'],
@@ -89,7 +87,6 @@ device_map = {'bcm2835-rpi-b-plus':      ['bcm2835-rpi-b-plus', 'bcm'],
 
 ################################################################################
 def get_platform_name(arch,device_tree,device_type,test_plan):
-    pdb.set_trace()
     if (arch == 'arm' or arch =='arm64') and device_tree is None:
         platform_name = device_map[device_type][0] + ',legacy'
     else:
@@ -127,12 +124,12 @@ def get_platform_name(arch,device_tree,device_type,test_plan):
                             device_type = 'juno-kvm-host'
                     platform_name = device_map[device_type][0]
             else:
-                pdb.set_trace()
-                print "Case not existing ?!"
+                print "Case not existing in original lava-report.py ?!"
+                platform_name = device_map[device_type][0]
         elif test_plan == 'boot-nfs' or test_plan == 'boot-nfs-mp':
-                    platform_name = device_map[device_type][0] + '_rootfs:nfs'
+            platform_name = device_map[device_type][0] + '_rootfs:nfs'
         else:
-                    platform_name = device_map[device_type][0]
+            platform_name = device_map[device_type][0]
 
     return platform_name,device_type
 
@@ -880,7 +877,6 @@ def test_report(config):
                 test_meta['job'] = kernel_tree
                 # Need to fetch the internal build id
                 if config.get('lab') and config.get('api') and config.get('token'):
-                    pdb.set_trace()
                     headers = {
                         'Authorization': config.get('token'),
                         'Content-Type': 'application/json'
