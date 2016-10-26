@@ -16,74 +16,8 @@ import requests
 from lib import configuration
 from lib import utils
 
+from device_map import device_type_map as device_map
 log2html = 'https://git.linaro.org/people/kevin.hilman/build-scripts.git/blob_plain/HEAD:/log2html.py'
-
-device_map = {'bcm2835-rpi-b-plus':      ['bcm2835-rpi-b-plus', 'bcm'],
-              'bcm4708-smartrg-sr400ac': ['bcm4708-smartrg-sr400ac', 'bcm'],
-              'armada-370-mirabox':      ['armada-370-mirabox', 'mvebu'],
-              'arndale':                 ['exynos5250-arndale', 'exynos'],
-              'snow':                    ['exynos5250-snow', 'exynos'],
-              'arndale-octa':            ['exynos5420-arndale-octa','exynos'],
-              'peach-pi':                ['exynos5800-peach-pi', 'exynos'],
-              'odroid-xu3':              ['exynos5422-odroidxu3', 'exynos'],
-              'odroid-u2':               ['exynos4412-odroidu3', 'exynos'],
-              'odroid-x2':               ['exynos4412-odroidx2', 'exynos'],
-              'beaglebone-black':        ['am335x-boneblack', 'omap2'],
-              'omap3-overo-tobi':        ['omap3-overo-tobi', 'omap2'],
-              'omap3-overo-storm-tobi':  ['omap3-overo-storm-tobi', 'omap2'],
-              'beagle-xm':               ['omap3-beagle-xm', 'omap2'],
-              'panda-es':                ['omap4-panda-es', 'omap2'],
-              'panda':                   ['omap4-panda', 'omap2'],
-              'omap5-uevm' :             ['omap5-uevm', 'omap2' ],
-              'cubieboard2':             ['sun7i-a20-cubieboard2', 'sunxi'],
-              'cubieboard3':             ['sun7i-a20-cubietruck', 'sunxi'],
-              'cubieboard3-kvm-host':    ['sun7i-a20-cubietruck-kvm-host', 'sunxi'],
-              'cubieboard3-kvm-guest':   ['sun7i-a20-cubietruck-kvm-guest', 'sunxi'],
-              'sun7i-a20-bananapi':      ['sun7i-a20-bananapi', 'sunxi'],
-              'optimus-a80':             ['sun9i-a80-optimus', 'sunxi'],
-              'cubieboard4':             ['sun9i-a80-cubieboard4', 'sunxi'],
-              'rk3288-rock2-square':     ['rk3288-rock2-square', 'rockchip'],
-              'zx296702-ad1':            ['zx296702-ad1', 'sunxi'],
-              'hi3716cv200':             ['hisi-x5hd2-dkb', 'hisi'],
-              'd01':                     ['hip04-d01', 'hisi'],
-              'imx6q-wandboard':         ['imx6q-wandboard', 'imx'],
-              'imx6q-sabrelite':         ['imx6q-sabrelite', 'imx'],
-              'meson8b_odroidc1':        ['meson8b-odroidc1', 'meson'],
-              'utilite-pro':             ['imx6q-cm-fx6', 'imx'],
-              'snowball':                ['ste-snowball', 'u8500'],
-              'ifc6540':                 ['qcom-apq8084-ifc6540', 'qcom'],
-              'ifc6410':                 ['qcom-apq8064-ifc6410', 'qcom'],
-              'highbank':                ['highbank', 'highbank'],
-              'sama53d':                 ['at91-sama5d3_xplained', 'at91'],
-              'jetson-tk1':              ['tegra124-jetson-tk1', 'tegra'],
-              'tegra124-nyan-big':       ['tegra124-nyan-big', 'tegra'],
-              'parallella':              ['zynq-parallella', 'zynq'],
-              'zynq-zc702':              ['zynq-zc702', 'zynq'],
-              'qemu-arm-cortex-a15':     ['vexpress-v2p-ca15-tc1', 'vexpress'],
-              'qemu-arm-cortex-a15-a7':  ['vexpress-v2p-ca15_a7', 'vexpress'],
-              'qemu-arm-cortex-a9':      ['vexpress-v2p-ca9', 'vexpress'],
-              'qemu-arm':                ['versatilepb', 'versatile'],
-              'qemu-aarch64':            ['qemu-aarch64', 'qemu'],
-              'apq8016-sbc':             ['apq8016-sbc', 'qcom'],
-              'mustang':                 ['apm-mustang', 'apm'],
-              'mustang-kvm-host':        ['apm-mustang-kvm-host', 'apm'],
-              'mustang-kvm-guest':       ['apm-mustang-kvm-guest', 'apm'],
-              'mustang-kvm-uefi-host':   ['apm-mustang-kvm-uefi-host', 'apm'],
-              'mustang-kvm-uefi-guest':  ['apm-mustang-kvm-uefi-guest', 'apm'],
-              'juno':                    ['juno', 'arm'],
-              'juno-kvm-host':           ['juno-kvm-host', 'arm'],
-              'juno-kvm-guest':          ['juno-kvm-guest', 'arm'],
-              'juno-kvm-uefi-host':      ['juno-kvm-uefi-host', 'arm'],
-              'juno-kvm-uefi-guest':     ['juno-kvm-uefi-guest', 'arm'],
-              'rtsm_fvp_base-aemv8a':    ['fvp-base-gicv2-psci', 'arm'],
-              'hi6220-hikey':            ['hi6220-hikey', 'hisi'],
-              'fsl-ls2085a-rdb':         ['fsl-ls2080a-rdb', 'freescale'],
-              'fsl-ls2085a-simu':        ['fsl-ls2080a-simu', 'freescale'],
-              'minnowboard-max-E3825':   ['minnowboard-max', None],
-              'x86-atom330':             ['x86-atom330', None],
-              'x86':                     ['x86', None],
-              'kvm':                     ['x86-kvm', None]}
-
 
 ################################################################################
 def get_platform_name(arch,device_tree,device_type,test_plan):
@@ -194,7 +128,9 @@ def get_job_detail(connection,job_id,job_elem):
 
 ################################################################################
 def boot_report(config):
-    results_directory = os.path.join(os.getcwd(),'results')
+    result_name='results'
+    if config.get('result'): result_name=config.get('result')
+    results_directory = os.path.join(os.getcwd(),result_name)
     if not os.path.isdir(results_directory): utils.mkdir(results_directory)
     
     results = {}
@@ -664,7 +600,7 @@ def boot_report(config):
     # sendmail
     if config.get("email"):
         print 'Sending e-mail summary to %s' % config.get("email")
-        if os.path.exists(report_directory):
+        if report_directory and os.path.exists(report_directory):
             cmd = 'cat %s | sendmail -t' % os.path.join(report_directory, boot)
             subprocess.check_output(cmd, shell=True)
         if dt_tests:
@@ -674,7 +610,9 @@ def boot_report(config):
 
 ################################################################################
 def test_report(config):
-    results_directory = os.path.join(os.getcwd(),'results')
+    result_name='results'
+    if config.get('result'): result_name=config.get('result')
+    results_directory = os.path.join(os.getcwd(),result_name)
     if not os.path.isdir(results_directory): utils.mkdir(results_directory)
 
     results = {}
@@ -1053,6 +991,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", help="configuration for the LAVA server")
     parser.add_argument("--section", default="default", help="section in the LAVA config file")
+    parser.add_argument("--result", help="Result name (default=results)")
     parser.add_argument("--boot", help="creates a kernel-ci boot report from a given json file")
     parser.add_argument("--test", nargs='+', help="creates a kernel-ci test report from a given json file")
     parser.add_argument("--lab", help="lab id")

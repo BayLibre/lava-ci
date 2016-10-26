@@ -4,6 +4,7 @@
 # Usage ./lava-job-runner.py <username> <token> <lava_server_url> [job_repo] [bundle_stream]
 
 import os
+import shutil
 import xmlrpclib
 import json
 import subprocess
@@ -17,7 +18,6 @@ from lib import utils
 from lib import configuration
 
 job_map = {}
-
 
 def poll_jobs(connection, timeout):
     run = True
@@ -283,9 +283,16 @@ def main(args):
         jobs['username'] = config.get("username")
         jobs['token'] = config.get("token")
         jobs['server'] = config.get("server")
-        results_directory = os.getcwd() + '/results'
+
+        result_name="result"
+        if config.get("result"):
+            result_name=config.get("result")
+        results_directory = os.path.join(os.getcwd(),result_name)
         utils.mkdir(results_directory)
         utils.write_json(config.get("poll"), results_directory, jobs)
+        if config.get("jobs"):
+            shutil.copytree(config.get("jobs"),os.path.join(results_directory,os.path.basename(config.get("jobs"))))
+        print "Put jobs and result under: " + str(results_directory)
     exit(0)
 
 if __name__ == '__main__':
@@ -301,5 +308,6 @@ if __name__ == '__main__':
     parser.add_argument("--poll", help="poll the submitted LAVA jobs, dumps info into specified json")
     parser.add_argument("--timeout", type=int, default=-1, help="polling timeout in seconds. default is -1.")
     parser.add_argument('--bisect', help="bisection mode, returns 1 on any job failures", action='store_true')
+    parser.add_argument('--result', help="Result name to use")
     args = vars(parser.parse_args())
     main(args)

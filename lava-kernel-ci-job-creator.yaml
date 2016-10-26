@@ -1,0 +1,100 @@
+beaglebone_black:
+    device_type: beaglebone-black
+    templates: ['generic-arm-dtb-kernel-ci-boot-template.json',
+                'generic-arm-dtb-kernel-ci-boot-nfs-template.json',
+                'generic-arm-dtb-kernel-ci-boot-nfs-mp-template.json',
+                'generic-arm-dtb-kernel-ci-ltp-mm-template.json',
+                'generic-arm-dtb-kernel-ci-ltp-syscalls-template.json',
+                'generic-arm-dtb-kernel-ci-TEST-template.json',
+#                'generic-arm-dtb-kernel-ci-IDLE-template.json',
+#                'generic-arm-dtb-kernel-ci-LMBENCH-template.json',
+#                'generic-arm-dtb-kernel-ci-SUSPENDRESUME-template.json',
+#                'generic-arm-dtb-kernel-ci-MP3-DECODE-FAKE-template.json',
+                'generic-arm-dtb-kernel-ci-kselftest-template.json',
+                'generic-arm-dtb-kernel-ci-hackbench-template.json']
+    defconfig_blacklist: ['arm-allmodconfig']
+    kernel_blacklist: []
+    nfs_blacklist: []
+    lpae: false
+    fastboot: false
+
+panda_es:
+    device_type: panda-es
+    templates: ['generic-arm-dtb-kernel-ci-boot-template.json',
+                'generic-arm-dtb-kernel-ci-kselftest-template.json',
+                'generic-arm-dtb-kernel-ci-IDLE-template.json',
+                'generic-arm-dtb-kernel-ci-LMBENCH-template.json',
+                'generic-arm-dtb-kernel-ci-SUSPENDRESUME-template.json',
+                'generic-arm-dtb-kernel-ci-MP3-DECODE-FAKE-template.json',
+                'generic-arm-dtb-kernel-ci-hackbench-template.json']
+    defconfig_blacklist: ['arm-allmodconfig']
+    kernel_blacklist: []
+    nfs_blacklist: []
+    lpae: false
+    fastboot: false
+
+qemu_arm:
+    device_type: qemu-arm
+    templates: ['generic-arm-kernel-ci-boot-template.json',
+                'generic-arm-dtb-kernel-ci-kselftest-template.json']
+    defconfig_blacklist: ['arm-allmodconfig']
+    kernel_blacklist: ['v3.10',
+                       'lsk-v3.10',
+                       'v3.12',
+                       'lsk-v3.12']
+    nfs_blacklist: []
+    lpae: False
+    fastboot: False
+
+qemu_aarch64:
+    device_type': 'qemu-aarch64'
+    templates: ['generic-arm64-kernel-ci-boot-template.json',
+                'generic-arm64-kernel-ci-kselftest-template.json']
+    defconfig_blacklist: ['arm64-allnoconfig',
+                          'arm64-allmodconfig']
+    kernel_blacklist: []
+    nfs_blacklist: []
+    lpae: False
+    fastboot: False
+
+
+x86:
+    device_type': 'x86'
+    templates: ['generic-x86-kernel-ci-boot-template.json',
+                     'generic-x86-kernel-ci-kselftest-template.json',
+                     'generic-x86-kernel-ci-hackbench-template.json']
+    defconfig_blacklist: ['x86-i386_defconfig',
+                               'x86-allnoconfig',
+                               'x86-allmodconfig',
+                               'x86-allmodconfig+CONFIG_OF=n',
+                               'x86-tinyconfig',
+                               'x86-kvm_guest.config']
+    kernel_blacklist: []
+    nfs_blacklist: []
+    lpae: False
+    fastboot: False
+
+x86_kvm: 
+    device_type: 'kvm'
+    templates: ['generic-x86-kernel-ci-boot-template.json',
+                'generic-x86-kernel-ci-kselftest-template.json',
+                'generic-x86-kernel-ci-hackbench-template.json']
+    defconfig_blacklist: ['x86-i386_defconfig',
+                          'x86-allnoconfig',
+                          'x86-allmodconfig',
+                          'x86-allmodconfig+CONFIG_OF=n',
+                          'x86-tinyconfig',
+                          'x86-kvm_guest.config']
+    kernel_blacklist: ['v3.10',
+                       'lsk-v3.10']
+    nfs_blacklist: []
+    lpae: False
+    fastboot: False
+
+
+device_map:
+    am335x-boneblack.dtb: [beaglebone_black]
+    omap4-panda-es.dtb:   [panda_es]
+    qemu-arm-legacy:      [qemu_arm]
+    qemu-aarch64-legacy:  [qemu_aarch64]
+

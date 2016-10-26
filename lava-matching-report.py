@@ -115,7 +115,9 @@ def main(args):
     bundles = connection.dashboard.bundles(bundle_stream)
     print "  => %d bundles to analyse" % len(bundles)
 
-    folder = os.path.join(os.getcwd(),'results')
+    result_name='results'
+    if config.get("result"): result_name=config.get("result")
+    folder = os.path.join(os.getcwd(),result_name)
     utils.mkdir(folder)
 
     matching = None
@@ -136,5 +138,7 @@ if __name__ == '__main__':
     parser.add_argument("--server",   help="server url for LAVA server")
     parser.add_argument("--stream",   help="bundle stream for LAVA server")
     parser.add_argument("--matching", help="a substring to look for in the job name")
+    parser.add_argument("--result", help="Result name (default = results)")
+
     my_args = vars(parser.parse_args())
     main(my_args)
