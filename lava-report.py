@@ -689,6 +689,20 @@ def test_report(config):
                     #  each, so we might attach the Mx to the last command, i.e. C.
                     #  In pratice, this is no big deal IMO.
                     #
+
+                        #FD 27/10/16: test_results['test_results'] contains:
+                        # test11
+                        # ...
+                        # test1T
+                        # measure11
+                        # ...
+                        # measure1M => All these measures are related to group of test1x
+                        # test21
+                        # ...
+                        # test2T
+                        # measure21
+                        # ...
+                        # measure2M => All these measures are related to goup of test2x
                         test_measures=[]
                         for test in test_results['test_results']:
                             if 'measurement' in test:
@@ -700,13 +714,29 @@ def test_report(config):
                                 measure['status'] = test['result'].upper()
                                 test_measures.append(measure)
                             else:
-                                # new command
+                                # new group of test
+                                # if there is a group of measurement link it to previous group of test
+                                if len(test_measures)>0:
+                                    test_case = {}
+                                    test_case['version'] = '1.0'
+                                    test_case['measurements'] = test_measures 
+                                    #if 1 fail is found in group of measure, all measures are failed
+                                    if 'FAIL' in [m['status'] for m in test_measures]:
+                                        test_case['status']='FAIL'
+                                    else:
+                                        test_case['status']='PASS'
+                                    test_cases.append(test_case)
+                                    #reinit test_measures array
+                                    test_measures=[]
+
                                 test_case = {}
                                 test_case['version'] = '1.0'
                                 test_case['name'] = test['test_case_id']
                                 test_case['status'] = test['result'].upper()
                                 test_cases.append(test_case)
 
+                        # last test is done and last measure may be done also
+                        # if there is a group of measurement link it to previous group of test
                         if len(test_measures)>0:
                             test_case = {}
                             test_case['version'] = '1.0'
@@ -716,6 +746,7 @@ def test_report(config):
                             else:
                                 test_case['status']='PASS'
                             test_cases.append(test_case)
+                            test_measures=[]
                             
 
                         bundle_attributes = bundle_data['test_runs'][-1]['attributes']
