@@ -661,6 +661,8 @@ def test_report(config):
             test_def_uri = None
             build_id = None
             efi_rtc = False
+            measure_index=1
+            measure_files=[]
 
             device_type,platform_name,job_name,result,bundle = get_job_detail(connection,job_id,job_elem)
 
@@ -689,6 +691,25 @@ def test_report(config):
                     #  each, so we might attach the Mx to the last command, i.e. C.
                     #  In pratice, this is no big deal IMO.
                     #
+
+                        #FD 2810/16: get attachements content to be put in file
+                        # TODO attachement content is encoded !!
+                        # Decode it before printing in file
+                        if test_results.has_key('attachments'):
+                            measure_file={}
+                            if isinstance(test_results['attachments'],list):
+                                for test_attachment in test_results['attachments']:
+                                    if test_attachment['pathname']!='stdout.log':
+                                        measure_file['content']=test_attachment['content']
+                                        measure_file['filename']='data_'+str(measure_index)+'.csv'
+                                        measure_index+=1
+                                        break
+                            else:
+                                if test_results['attachments']['pathname']!='stdout.log':
+                                    measure_file['content']=test_results['attachments']['content']
+                                    measure_file['filename']='data_'+str(measure_index)+'.csv'
+                                    measure_index+=1
+                            measure_files.append(measure_file)
 
                         #FD 27/10/16: test_results['test_results'] contains:
                         # test11
@@ -725,9 +746,11 @@ def test_report(config):
                                         test_case['status']='FAIL'
                                     else:
                                         test_case['status']='PASS'
+                                    test_case['filename']=measure_file['filename']
                                     test_cases.append(test_case)
                                     #reinit test_measures array
                                     test_measures=[]
+
 
                                 test_case = {}
                                 test_case['version'] = '1.0'
@@ -745,6 +768,7 @@ def test_report(config):
                                 test_case['status']='FAIL'
                             else:
                                 test_case['status']='PASS'
+                            test_case['filename']=measure_file['filename']
                             test_cases.append(test_case)
                             test_measures=[]
                             
@@ -818,6 +842,10 @@ def test_report(config):
                     directory = os.path.join(results_directory, kernel_defconfig)
                 utils.ensure_dir(directory)
                 utils.write_file(job_file, log, directory)
+                #create measure csv file
+                for mf in measure_files:
+                    utils.write_file(mf['content'], mf['filename'], directory)
+
                 if results.has_key(kernel_defconfig):
                     results[kernel_defconfig].append({'device_type': platform_name, 'test_plan': test_plan, 'test_cases': test_cases, 'result': result})
                 else:
